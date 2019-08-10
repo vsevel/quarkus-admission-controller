@@ -37,15 +37,16 @@ spec:
           image: registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1-16
           env:
             - name: keyfile
-              value: /var/run/secrets/openshift.io/services_serving_certs/tls.key
+              value: /certs/tls.key
             - name: crtfile
-              value: /var/run/secrets/openshift.io/services_serving_certs/tls.crt
+              value: /certs/tls.crt
             - name: keystore_pkcs12
               value: /var/run/secrets/java.io/keystores/keystore.pkcs12
             - name: keystore_jks
               value: /var/run/secrets/java.io/keystores/keystore.jks
             - name: password
-              value: changeit
+              # password is the default value in quarkus's CertificateConfig
+              value: password
           command: ['/bin/bash']
           args: ['-c', "openssl pkcs12 -export -inkey $keyfile -in $crtfile -out $keystore_pkcs12 -password pass:$password && keytool -importkeystore -noprompt -srckeystore $keystore_pkcs12 -srcstoretype pkcs12 -destkeystore $keystore_jks -storepass $password -srcstorepass $password"]
           volumeMounts:
@@ -59,14 +60,10 @@ spec:
 
         - name: quarkus-admission-controller
           image: quarkus/quarkus-admission-controller-jvm
+          imagePullPolicy: Never
           env:
             - name: JAVA_OPTIONS
-              value: -Dquarkus.http.host=0.0.0.0 quarkus.http.ssl.certificate.key-store-file=/var/run/secrets/java.io/keystores/keystore.jks -Djava.util.logging.manager=org.jboss.logmanager.LogManager
-          ports:
-            - name: http
-              containerPort: 8080
-            - name: https
-              containerPort: 8443
+              value: -Dquarkus.http.host=0.0.0.0 -Dquarkus.http.ssl.certificate.key-store-file=/var/run/secrets/java.io/keystores/keystore.jks -Djava.util.logging.manager=org.jboss.logmanager.LogManager
           volumeMounts:
             - name: certs-volume
               mountPath: /certs
@@ -76,7 +73,7 @@ spec:
 
       volumes:
         - name: certs-volume
-          configMap:
-            name: quarkus-admission-controller-tls
+          secret:
+            secretName: quarkus-admission-controller-tls
         - name: keystore-volume
           emptyDir: {}
