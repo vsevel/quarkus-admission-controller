@@ -1,0 +1,82 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: quarkus-admission-controller
+  labels:
+    app: quarkus-admission-controller
+spec:
+  selector:
+    app: quarkus-admission-controller
+  ports:
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 8443
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: quarkus-admission-controller
+  namespace: admission
+  labels:
+    app: quarkus-admission-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: quarkus-admission-controller
+      name: quarkus-admission-controller
+      namespace: admission
+    spec:
+
+      initContainers:
+
+        - name: pem-to-keystore
+          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1-16
+          env:
+            - name: keyfile
+              value: /var/run/secrets/openshift.io/services_serving_certs/tls.key
+            - name: crtfile
+              value: /var/run/secrets/openshift.io/services_serving_certs/tls.crt
+            - name: keystore_pkcs12
+              value: /var/run/secrets/java.io/keystores/keystore.pkcs12
+            - name: keystore_jks
+              value: /var/run/secrets/java.io/keystores/keystore.jks
+            - name: password
+              value: changeit
+          command: ['/bin/bash']
+          args: ['-c', "openssl pkcs12 -export -inkey $keyfile -in $crtfile -out $keystore_pkcs12 -password pass:$password && keytool -importkeystore -noprompt -srckeystore $keystore_pkcs12 -srcstoretype pkcs12 -destkeystore $keystore_jks -storepass $password -srcstorepass $password"]
+          volumeMounts:
+            - name: certs-volume
+              mountPath: /certs
+              readOnly: true
+            - name: keystore-volume
+              mountPath: /var/run/secrets/java.io/keystores
+
+      containers:
+
+        - name: quarkus-admission-controller
+          image: quarkus/quarkus-admission-controller-jvm
+          env:
+            - name: JAVA_OPTIONS
+              value: -Dquarkus.http.host=0.0.0.0 quarkus.http.ssl.certificate.key-store-file=/var/run/secrets/java.io/keystores/keystore.jks -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: https
+              containerPort: 8443
+          volumeMounts:
+            - name: certs-volume
+              mountPath: /certs
+              readOnly: true
+            - name: keystore-volume
+              mountPath: /var/run/secrets/java.io/keystores
+
+      volumes:
+        - name: certs-volume
+          configMap:
+            name: quarkus-admission-controller-tls
+        - name: keystore-volume
+          emptyDir: {}

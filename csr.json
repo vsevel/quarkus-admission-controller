@@ -1,0 +1,10 @@
+{
+  "hosts": [
+    "quarkus-admission-controller.admission.svc"
+  ],
+  "CN": "quarkus-admission-controller.admission.svc",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  }
+}
