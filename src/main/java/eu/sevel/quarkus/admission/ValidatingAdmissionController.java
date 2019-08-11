@@ -1,10 +1,8 @@
 package eu.sevel.quarkus.admission;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.admission.AdmissionResponseBuilder;
 import io.fabric8.kubernetes.api.model.admission.AdmissionReview;
 import io.fabric8.kubernetes.api.model.admission.AdmissionReviewBuilder;
-import io.fabric8.kubernetes.client.utils.Serialization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
