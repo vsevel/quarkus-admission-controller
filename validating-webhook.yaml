@@ -1,0 +1,27 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: quarkus-admission-controller
+webhooks:
+  - name: quarkus-admission-controller.sevel.eu
+    rules:
+      - apiGroups:
+          - "*"
+        apiVersions:
+          - "*"
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - deployments
+    namespaceSelector:
+      matchLabels:
+        admission: enabled
+    clientConfig:
+      service:
+        namespace: admission
+        name: quarkus-admission-controller
+        path: /validate
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1EZ3hNVEE0TkRBeU9Gb1hEVEk1TURnd09EQTROREF5T0Zvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTFVTClhzSzRIUzlVSDcxUVBrRXREZmtFbFlxTDIzdUxhQmJzRFRvSWFxbVgvWkJrb0g0R040THozSlhXTGh6L3MxTmMKUUxXM2hKOTNqZDBWWUliZVN4TllKaVh1OXJlZkRHR2tpZnhsOGZjRzRBdEoxSms2OFgxV3hzNXdvMGdhSi82QwowT0xaUUxnM0loMld4ck51bktJckdNUXZIVkFqR2ZDWjd5WGN6SkpqZnZ2b255aWpFT01QTm9aWThsNDdYdWszCkdvdVdXRTQ3MkFOcWRKL0JmQy8rVEdKVVpETmpzaEdBM09Mdk5BQTNtVWtjSVpTMTBqZzhXV3I5L0VpTDJyZ28Kd0JmL1NQSWRpV0NtV1d5aEZZZHcySkdGWXh4K044eVZSWWZmNC9JeWQzeDNPT2ZUUlhEQTB5OVdDallFbGV3TQpaNGlBWnlYTk1NRm5zbFZkWVVzQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFFdW5jcGwrUDFtK0VaRWVIZ3pEVHkwSGo5MmwKVWZtNkJzNEoyb3oyei9ZT2NlbVJYVGVucmJMVjJCYVowSExkSGhpUzZPVDVGQk9BbkxvYVVUOTJUWjFqWExvYQprYmlxcXlTSHVkMkc4NE13TDV3aUhIak8rUU9JcUVwNlF4bFZXc096ZUxxRlcxQk9IZTB6am1jb3dmSVZDMHNiCnpvaEFHeGJ4elU1dm9CNThOeFVlbDYxdmpyM1VWSHNubWVuTnlFU2J4TTF6VDI4MWtrQm5DaHQ0L3prQVlodncKWktrMzlyaXUvd1JocytXYlJyeU02VWJJejZyUmN1cTN4UDhvOCtqb0RaOEdrRXVSaGp0RExSWXZOWk04RmJ0cgpPUXZiTHdFQWJJd1UxMVRiRWZQbUZIeTQ1c2lheWlHY1gxYmZRYWpvTWsrWmsrVXpnUGF1aWpySkhCWT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    failurePolicy: Fail
