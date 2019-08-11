@@ -731,3 +731,6 @@ kubectl delete ns test-admission
 kubectl delete csr quarkus-admission-controller
 kubectl delete ValidatingWebhookConfiguration quarkus-admission-controller
 ```
+
+
+kubectl patch deploy httpbin -n test-admission --type='json' --patch='[{"op": "add", "path": "/metadata/labels/toto", "value": "titi"}]'
