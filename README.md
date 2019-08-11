@@ -1,5 +1,15 @@
 # quarkus-admission-controller
 
+a quarkus application has been created with the following extensions
+```
+mvn io.quarkus:quarkus-maven-plugin:0.20.0:create \
+    -DprojectGroupId=eu.sevel.quarkus.admission \
+    -DprojectArtifactId=quarkus-admission-controller \
+    -DclassName="eu.sevel.quarkus.admission.ValidatingAdmissionController" \
+    -Dpath="/validate" \
+    -Dextensions="resteasy-jsonb,kubernetes-client"
+```
+
 build the application
 ```
 mvn package
