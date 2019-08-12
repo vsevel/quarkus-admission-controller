@@ -30,7 +30,7 @@ deploy a certificate for host quarkus-admission-controller.admission.svc
 deploy controller 
 ```
 kubectl apply -f quarkus-admission-controller.yaml
-sleep 5
+sleep 10
 controller=$(kubectl get pods --selector=app=quarkus-admission-controller -o jsonpath='{.items[*].metadata.name}')
 kubectl logs $controller -f
 ```
@@ -724,13 +724,40 @@ you should see an UPDATE event with object and oldObject
 }
 ```
 
+deploy the mutating webhook
+```
+kubectl apply -f mutating-webhook.yaml
+```
+
+you should see
+```
+patching with [{"op":"add","path":"/metadata/labels/foo","value":"bar"}]
+```
+
+check that label has been applied to the deployment
+```
+kubectl get deploy -n test-admission httpbin -o yaml
+```
+
+you should see
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+...
+  labels:
+    foo: bar
+    name: httpbin
+  name: httpbin
+  namespace: test-admission
+
+```
+
 cleanup
 ```
 kubectl delete ns admission
 kubectl delete ns test-admission
 kubectl delete csr quarkus-admission-controller
-kubectl delete ValidatingWebhookConfiguration quarkus-admission-controller
+kubectl delete ValidatingWebhookConfiguration validating-quarkus-admission-controller
+kubectl delete MutatingWebhookConfiguration mutating-quarkus-admission-controller
 ```
-
-
-kubectl patch deploy httpbin -n test-admission --type='json' --patch='[{"op": "add", "path": "/metadata/labels/toto", "value": "titi"}]'
