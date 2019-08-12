@@ -324,6 +324,9 @@ kubectl label deployment httpbin -n test-admission foo=bar
 ```
 
 you should see an UPDATE event with object and oldObject
+<details><summary>UPDATE event</summary>
+<p>
+
 ```
 {
     "additionalProperties": {
@@ -723,6 +726,8 @@ you should see an UPDATE event with object and oldObject
     }
 }
 ```
+</p>
+</details>
 
 deploy the mutating webhook
 ```
