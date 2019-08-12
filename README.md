@@ -729,6 +729,12 @@ deploy the mutating webhook
 kubectl apply -f mutating-webhook.yaml
 ```
 
+recdeploy the application 
+```
+kubectl delete -f httpbin.yaml
+kubectl apply -f httpbin.yaml
+```
+
 you should see
 ```
 patching with [{"op":"add","path":"/metadata/labels/foo","value":"bar"}]
