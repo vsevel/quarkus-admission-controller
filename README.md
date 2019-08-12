@@ -81,6 +81,7 @@ kubectl delete -f httpbin.yaml
 you should see a DELETE event in the controller logs
 <details><summary>DELETE event</summary>
 <p>
+
 ```
 {
     "additionalProperties": {
@@ -121,6 +122,7 @@ you should see a DELETE event in the controller logs
     }
 }
 ```
+
 </p>
 </details>
 
