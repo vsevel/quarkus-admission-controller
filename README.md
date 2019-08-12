@@ -132,6 +132,7 @@ kubectl apply -f httpbin.yaml
 you should now see a CREATE event with object
 <details><summary>CREATE event</summary>
 <p>
+
 ```
 {
     "additionalProperties": {
