@@ -729,7 +729,7 @@ deploy the mutating webhook
 kubectl apply -f mutating-webhook.yaml
 ```
 
-recdeploy the application 
+redeploy the application 
 ```
 kubectl delete -f httpbin.yaml
 kubectl apply -f httpbin.yaml
