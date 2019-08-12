@@ -79,6 +79,8 @@ kubectl delete -f httpbin.yaml
 ```
 
 you should see a DELETE event in the controller logs
+<details><summary>DELETE event</summary>
+<p>
 ```
 {
     "additionalProperties": {
@@ -119,6 +121,8 @@ you should see a DELETE event in the controller logs
     }
 }
 ```
+</p>
+</details>
 
 recreate the application
 ```
@@ -126,6 +130,8 @@ kubectl apply -f httpbin.yaml
 ```
 
 you should now see a CREATE event with object
+<details><summary>CREATE event</summary>
+<p>
 ```
 {
     "additionalProperties": {
@@ -317,6 +323,8 @@ you should now see a CREATE event with object
     }
 }
 ```
+</p>
+</details>
 
 make a modification
 ```
