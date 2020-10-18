@@ -55,10 +55,10 @@
       <artifactId>quarkus-kubernetes-client</artifactId>
     </dependency>
     <!-- unmarshalling error of Admission Review fixed with quarkus undertow; with quarkus modified version k8s client will throw an error.. -->
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-undertow</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.quarkus</groupId>-->
+<!--      <artifactId>quarkus-undertow</artifactId>-->
+<!--    </dependency>-->
   </dependencies>
   <build>
     <plugins>

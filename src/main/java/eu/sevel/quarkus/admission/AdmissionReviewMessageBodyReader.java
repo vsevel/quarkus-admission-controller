@@ -27,6 +27,7 @@ public class AdmissionReviewMessageBodyReader implements MessageBodyReader<Admis
 
     @Override
     public AdmissionReview readFrom(Class<AdmissionReview> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
-        return Serialization.unmarshal(entityStream, AdmissionReview.class);
+        //without the extra step of wrapping the unmarshal will hit an error.
+        return Serialization.unmarshal(new String(entityStream.readAllBytes()), AdmissionReview.class);
     }
 }
