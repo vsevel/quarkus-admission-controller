@@ -1,6 +1,8 @@
 # quarkus-admission-controller
 
-##prerequisites
+Thanks to @keeyzar for refreshing the guide to Quarkus 1.9
+
+## prerequisites
 creation of the certificate request is done with cfssl & cfssljson;
 1. install go https://golang.org/doc/install
 2. install plugins **cfssl and cfssljson** for go https://github.com/cloudflare/cfssl
@@ -15,7 +17,7 @@ minikube start
 eval $(minikube docker-env)
 ```
 
-##installation
+## installation
 
 a quarkus application has been created with the following extensions
 ```
