@@ -1,6 +1,7 @@
 package eu.sevel.quarkus.admission;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.KubernetesResource;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.admission.AdmissionRequest;
 import io.fabric8.kubernetes.api.model.admission.AdmissionResponseBuilder;
@@ -11,9 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonPatch;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -21,9 +20,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +32,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Produces(APPLICATION_JSON)
 @Consumes(APPLICATION_JSON)
 public class MutatingAdmissionController {
-
     private static final Logger log = LoggerFactory.getLogger(MutatingAdmissionController.class);
 
     @POST
@@ -51,17 +47,17 @@ public class MutatingAdmissionController {
                 .withAllowed(true)
                 .withUid(request.getUid());
 
-        HasMetadata object = request.getObject();
+        KubernetesResource object = request.getObject();
 
         if (request.getOperation().equals("CREATE") && object instanceof Deployment) {
+            Deployment deployment = (Deployment) object;
+            if (needsMutating(deployment)) {
 
-            if (needsMutating(object)) {
+                JsonObject original = toJsonObject(deployment);
 
-                JsonObject original = toJsonObject(object);
+                mutate(deployment);
 
-                mutate(object);
-
-                JsonObject mutated = toJsonObject(object);
+                JsonObject mutated = toJsonObject(deployment);
 
                 String patch = Json.createDiff(original, mutated).toString();
                 String encoded = Base64.getEncoder().encodeToString(patch.getBytes());
@@ -74,7 +70,12 @@ public class MutatingAdmissionController {
 
         }
 
-        return new AdmissionReviewBuilder().withResponse(responseBuilder.build()).build();
+
+        AdmissionReview admissionReview = new AdmissionReviewBuilder().withResponse(responseBuilder.build()).build();
+        //fabric8io has v1beta1 ; newer versions (>v1.15) have v1
+        //both are identical regarding interface
+        admissionReview.setApiVersion(review.getApiVersion());
+        return admissionReview;
     }
 
     JsonObject toJsonObject(HasMetadata object) {

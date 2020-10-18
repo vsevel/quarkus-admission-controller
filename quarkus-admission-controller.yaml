@@ -14,7 +14,7 @@ spec:
       port: 443
       targetPort: 8443
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: quarkus-admission-controller
@@ -23,6 +23,9 @@ metadata:
     app: quarkus-admission-controller
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus-admission-controller
   template:
     metadata:
       labels:
@@ -30,9 +33,7 @@ spec:
       name: quarkus-admission-controller
       namespace: admission
     spec:
-
       initContainers:
-
         - name: pem-to-keystore
           image: registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1-16
           env:
@@ -55,22 +56,22 @@ spec:
               readOnly: true
             - name: keystore-volume
               mountPath: /var/run/secrets/java.io/keystores
-
       containers:
-
         - name: quarkus-admission-controller
           image: quarkus/quarkus-admission-controller-jvm
           imagePullPolicy: Never
           env:
             - name: JAVA_OPTIONS
-              value: -Dquarkus.http.host=0.0.0.0 -Dquarkus.http.ssl.certificate.key-store-file=/var/run/secrets/java.io/keystores/keystore.jks -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+              value:
+                -Dquarkus.http.host=0.0.0.0
+                -Dquarkus.http.ssl.certificate.key-store-file=/var/run/secrets/java.io/keystores/keystore.jks
+                -Djava.util.logging.manager=org.jboss.logmanager.LogManager
           volumeMounts:
             - name: certs-volume
               mountPath: /certs
               readOnly: true
             - name: keystore-volume
               mountPath: /var/run/secrets/java.io/keystores
-
       volumes:
         - name: certs-volume
           secret:

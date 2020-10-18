@@ -1,14 +1,19 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: httpbin
   namespace: test-admission
+  labels:
+    app: httpbin
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: httpbin
   template:
     metadata:
       labels:
-        name: httpbin
+        app: httpbin
     spec:
       containers:
         - name: httpbin
