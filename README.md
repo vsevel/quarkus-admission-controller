@@ -21,20 +21,12 @@ eval $(minikube docker-env)
 
 a quarkus application has been created with the following extensions
 ```
-mvn io.quarkus:quarkus-maven-plugin:1.8.1.Final:create \
+mvn io.quarkus:quarkus-maven-plugin:1.9.0.CR1:create \
     -DprojectGroupId=eu.sevel.quarkus.admission \
     -DprojectArtifactId=quarkus-admission-controller \
     -DclassName="eu.sevel.quarkus.admission.ValidatingAdmissionController" \
     -Dpath="/validate" \
-    -Dextensions="resteasy-jsonb,kubernetes-client,undertow"
-```
-unfortunately, this won't install 1.8.1.Final,
-you need to tweak the versions manually in the pom to this version (last tested one)
-1.9.0 RC has deserializing errors of AdmissionReview
-
-```
-    <quarkus-plugin.version>1.8.1.Final</quarkus-plugin.version>
-    <quarkus.platform.version>1.8.1.Final</quarkus.platform.version>
+    -Dextensions="resteasy-jsonb,kubernetes-client"
 ```
 
 build the application
